@@ -16,5 +16,4 @@ fn main() {
     let result = is_email("hello@minsky");
     assert_eq!(result, false);
 }
-
 ```
