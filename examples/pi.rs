@@ -7,7 +7,7 @@ fn calculate_pi_with_n_decimals(n: u32) -> f64 {
 }
 
 fn main() {
-    let result = calculate_pi_with_n_decimals(10);
+    let result = calculate_pi_with_n_decimals(100);
     println!("pi: {}", result);
     // assert_eq!(result, 3.0418396189294032);
 }
