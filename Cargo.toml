@@ -2,6 +2,8 @@
 name = "auto-rust"
 version = "0.1.0"
 edition = "2021"
+description = "A tool to automatically generate Rust code at compile time."
+license = "MIT AND Apache-2.0"
 
 [lib]
 proc-macro = true
