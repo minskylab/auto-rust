@@ -16,7 +16,7 @@ pub fn implement(_item: TokenStream) -> TokenStream {
     // TODO: Evaluate the use of dotenv in this crate
     dotenv().ok();
 
-    let implemented_fn = generate_body_function_from_head(_item).unwrap();
+    let implemented_fn = generate_body_function_from_head(_item.to_string()).unwrap();
 
     println!("{}", implemented_fn);
 
@@ -31,7 +31,7 @@ pub fn auto_implement(args: TokenStream, input: TokenStream) -> TokenStream {
 
     // Search for the information within the attributes.
 
-    let mut target_info = String::new();
+    let mut prompt_input = String::new();
 
     let fn_header = ast.sig.to_token_stream().to_string();
 
@@ -48,11 +48,22 @@ pub fn auto_implement(args: TokenStream, input: TokenStream) -> TokenStream {
         //     break;
         //     // }
         // }
-        println!("{}", data)
+        println!("{}", data);
+
+        prompt_input.push_str(&data);
+        prompt_input.push('\n');
         // }
     }
 
-    println!("Information extracted: {:?}", target_info);
+    prompt_input.push_str(&fn_header);
 
-    input
+    println!("Information extracted: {:?}", prompt_input);
+
+    dotenv().ok();
+
+    let implemented_fn = generate_body_function_from_head(prompt_input).unwrap();
+
+    println!("{}", implemented_fn);
+
+    implemented_fn.parse().unwrap()
 }
