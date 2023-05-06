@@ -1,6 +1,10 @@
-use auto_rust::implement;
+use auto_rust::auto_implement;
 
-implement!(fn is_email(input: String) -> bool);
+#[auto_implement]
+#[doc = "This function calculates if the input is a valid email address without use regex."]
+fn is_email(input: String) -> bool {
+    todo!()
+}
 
 fn main() {
     let result = is_email("bregy@minsky.cc".to_string());

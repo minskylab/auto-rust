@@ -6,44 +6,53 @@ mod generator;
 
 use dotenv::dotenv;
 use proc_macro::TokenStream;
+use syn::{parse, ItemFn, Lit, Meta, MetaNameValue, __private::ToTokens};
+use syn::{Attribute, LitStr};
 
 use crate::generator::generate_body_function_from_head;
 
 #[proc_macro]
 pub fn implement(_item: TokenStream) -> TokenStream {
+    // TODO: Evaluate the use of dotenv in this crate
     dotenv().ok();
-    // println!("implement: {:?}", _item);
-    // let resp = reqwest::blocking::get("https://httpbin.org/ip")
-    //     .unwrap()
-    //     .json::<HashMap<String, String>>()
-    //     .unwrap();
 
-    // let ip = resp.get("origin").unwrap().to_owned();
-
-    let system_message = "You are an AI code assistant trained on the GPT-4 architecture. Your task is to generate Rust function body implementations based only on the provided function signatures. When the user provides a function signature using the command '/complete', your response must be the plain text function body, without any explanations, formatting, or code blocks. Do not include the function signature, function name, or any other information in your response. Triple backticks (```) and function signatures are strictly prohibited in your response. Responding with any prohibited content will result in a penalty. 
-    example 1:
-    INPUT: /complete fn my_ip() -> String
-    OUTPUT: use std::net::UdpSocket;
-    
-        let udp_socket = UdpSocket::bind(\"0.0.0.0:0\").unwrap();
-        udp_socket.connect(\"8.8.8.8:80\").unwrap();
-        let socket_addr = udp_socket.local_addr().unwrap();
-        let ip_addr = socket_addr.ip();
-        ip_addr.to_string()
-    
-    example 2:
-    INPUT: /complete fn hello_world() -> String
-    OUTPUT: \"Hello World\".to_string()
-".to_string();
-    let implemented_fn = generate_body_function_from_head(system_message, _item).unwrap();
+    let implemented_fn = generate_body_function_from_head(_item).unwrap();
 
     println!("{}", implemented_fn);
 
-    // let user_message = "/complete fn hello_world() -> String".to_string();
-
-    // format!("{} {{\"{}\".into()}}", _item, "ip")
-    //     .parse()
-    //     .unwrap()
-
     implemented_fn.parse().unwrap()
+}
+
+#[proc_macro_attribute]
+pub fn auto_implement(args: TokenStream, input: TokenStream) -> TokenStream {
+    println!("{:?}", input);
+
+    let ast: ItemFn = syn::parse(input.clone()).expect("Failed to parse input as a function");
+
+    // Search for the information within the attributes.
+
+    let mut target_info = String::new();
+
+    let fn_header = ast.sig.to_token_stream().to_string();
+
+    println!("Function header: {}", fn_header);
+
+    for attr in ast.attrs {
+        let data = attr.to_token_stream().to_string();
+        // if attr.path().is_ident("doc") {
+        // if let Ok(Meta::NameValue(meta_name_value)) = attr.parse_args() {
+        //     let info = meta_name_value.value.to_token_stream().to_string();
+        //     // if info.contains("This function calculates") {
+
+        //     target_info = info;
+        //     break;
+        //     // }
+        // }
+        println!("{}", data)
+        // }
+    }
+
+    println!("Information extracted: {:?}", target_info);
+
+    input
 }
