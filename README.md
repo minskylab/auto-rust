@@ -2,6 +2,10 @@
 
 `auto-rust` is an experimental project that aims to automatically generate Rust code with LLM (Large Language Models) during compilation, utilizing procedural macros.
 
+<p align="center">
+  <img width="640" src="public/auto_rust_example.png">
+</p>
+
 ## ⚠️ Warning
 
 Please note that Auto-Rust is currently under development and is not yet suitable for production use. While you are welcome to try it out and provide feedback, we caution that it may have an incomplete implementation and may not function as intended.
@@ -11,6 +15,12 @@ Please note that Auto-Rust is currently under development and is not yet suitabl
 ```toml
 [dependencies]
 auto-rust = "0.1.0"
+```
+
+You need to create a .env file in the root of your project with the following content:
+
+```bash
+OPENAI_API_KEY=<your-openai-api-key>
 ```
 
 ## Example
