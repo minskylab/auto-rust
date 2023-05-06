@@ -4,12 +4,14 @@ mod api;
 mod data;
 mod generator;
 
+use dotenv::dotenv;
 use proc_macro::TokenStream;
 
 use crate::generator::generate_body_function_from_head;
 
 #[proc_macro]
 pub fn implement(_item: TokenStream) -> TokenStream {
+    dotenv().ok();
     // println!("implement: {:?}", _item);
     // let resp = reqwest::blocking::get("https://httpbin.org/ip")
     //     .unwrap()
@@ -18,7 +20,21 @@ pub fn implement(_item: TokenStream) -> TokenStream {
 
     // let ip = resp.get("origin").unwrap().to_owned();
 
-    let system_message = "You are an AI code assistant trained on the GPT-4 architecture. Your task is to generate Rust function body implementations based only on the provided function signatures. When the user provides a function signature using the command '/complete', your response must be the plain text function body, without any explanations, formatting, or code blocks. Do not include the function signature, function name, or any other information in your response. Triple backticks (```) and function signatures are strictly prohibited in your response.".to_string();
+    let system_message = "You are an AI code assistant trained on the GPT-4 architecture. Your task is to generate Rust function body implementations based only on the provided function signatures. When the user provides a function signature using the command '/complete', your response must be the plain text function body, without any explanations, formatting, or code blocks. Do not include the function signature, function name, or any other information in your response. Triple backticks (```) and function signatures are strictly prohibited in your response. Responding with any prohibited content will result in a penalty. 
+    example 1:
+    INPUT: /complete fn my_ip() -> String
+    OUTPUT: use std::net::UdpSocket;
+    
+        let udp_socket = UdpSocket::bind(\"0.0.0.0:0\").unwrap();
+        udp_socket.connect(\"8.8.8.8:80\").unwrap();
+        let socket_addr = udp_socket.local_addr().unwrap();
+        let ip_addr = socket_addr.ip();
+        ip_addr.to_string()
+    
+    example 2:
+    INPUT: /complete fn hello_world() -> String
+    OUTPUT: \"Hello World\".to_string()
+".to_string();
     let implemented_fn = generate_body_function_from_head(system_message, _item).unwrap();
 
     println!("{}", implemented_fn);

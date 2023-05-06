@@ -14,9 +14,8 @@ pub fn generate_body_function_from_head(
 
     let body_str = res.choices.first().unwrap().to_owned().message.content;
 
-    // let body = quote! {
-    //     "Hello, world!".into()
-    // };
+    //TODO: improve the prompt to eliminate the need for this
+    let body_str = body_str.trim_matches('`').to_string();
 
     let implementation = format!("{} {{{}}}", head, body_str);
 
