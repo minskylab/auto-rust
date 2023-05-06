@@ -1,13 +1,10 @@
-// extern crate proc_macro;
-
 mod api;
 mod data;
 mod generator;
 
 use dotenv::dotenv;
 use proc_macro::TokenStream;
-use syn::{parse, ItemFn, Lit, Meta, MetaNameValue, __private::ToTokens};
-use syn::{Attribute, LitStr};
+use syn::{ItemFn, __private::ToTokens};
 
 use crate::generator::generate_body_function_from_head;
 
@@ -25,9 +22,7 @@ pub fn implement(_item: TokenStream) -> TokenStream {
 
 #[proc_macro_attribute]
 pub fn auto_implement(args: TokenStream, input: TokenStream) -> TokenStream {
-    println!("{:?}", input);
-
-    let ast: ItemFn = syn::parse(input.clone()).expect("Failed to parse input as a function");
+    let ast: ItemFn = syn::parse(input).expect("Failed to parse input as a function");
 
     // Search for the information within the attributes.
 
@@ -39,20 +34,9 @@ pub fn auto_implement(args: TokenStream, input: TokenStream) -> TokenStream {
 
     for attr in ast.attrs {
         let data = attr.to_token_stream().to_string();
-        // if attr.path().is_ident("doc") {
-        // if let Ok(Meta::NameValue(meta_name_value)) = attr.parse_args() {
-        //     let info = meta_name_value.value.to_token_stream().to_string();
-        //     // if info.contains("This function calculates") {
-
-        //     target_info = info;
-        //     break;
-        //     // }
-        // }
-        println!("{}", data);
 
         prompt_input.push_str(&data);
         prompt_input.push('\n');
-        // }
     }
 
     prompt_input.push_str(&fn_header);

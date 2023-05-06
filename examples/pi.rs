@@ -1,7 +1,7 @@
 use auto_rust::auto_implement;
 
 #[auto_implement]
-/// This function calculates pi with a robust and very fast algorithm.
+/// This function calculates pi with a reliable algorithm.
 fn calculate_pi_with_n_decimals(n: u32) -> f64 {
     todo!()
 }
