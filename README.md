@@ -40,6 +40,12 @@ fn main() {
 }
 ```
 
+## Limitations
+
+- LLMs are non-deterministic. If you don't get what you want from the first attempt - iterate, experiment with it.
+- Actually, the context is limited by whatever code is in your function definition, no knowledge of project structure or other files.
+- The extension doesn't add imports when new dependencies are introduced in the created code.
+
 ## Contributing
 
 Contributions are welcome. Feel free to open an issue if you have any questions or want to suggest an improvement.
