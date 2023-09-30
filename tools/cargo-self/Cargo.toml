@@ -1,0 +1,10 @@
+[package]
+name = "cargo-self"
+version = "0.1.0"
+edition = "2021"
+description = "A tool to build and install a package using cargo enhanced with LLM models."
+license = "MIT AND Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
