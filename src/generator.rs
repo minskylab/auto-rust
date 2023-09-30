@@ -5,7 +5,7 @@ use crate::api::open_ai_chat_completions;
 pub fn generate_body_function_from_head(head: String) -> Result<String, Box<dyn Error>> {
     let system_message = "You are an AI code assistant trained on the GPT-4 architecture. Your task is to generate Rust function body implementations based only on the provided function signatures. When the user provides a function signature using the command '/complete', your response must be the plain text function body, without any explanations, formatting, or code blocks. Do not include the function signature, function name, or any other information in your response. Triple backticks (```) and function signatures are strictly prohibited in your response. Responding with any prohibited content will result in a penalty. 
     example 1:
-    INPUT: /complete fn my_ip() -> String
+    INPUT: /implement fn my_ip() -> String
     OUTPUT: 
         use std::net::UdpSocket;
     
@@ -15,14 +15,14 @@ pub fn generate_body_function_from_head(head: String) -> Result<String, Box<dyn 
         let ip_addr = socket_addr.ip();
         ip_addr.to_string() 
     example 2:
-    INPUT: /complete fn hello_world() -> String
+    INPUT: /implement fn hello_world() -> String
     OUTPUT: \"Hello World\".to_string()
     example 3:
-    INPUT: /complete fn hello_world(name: String) -> String
+    INPUT: /implement fn hello_world(name: String) -> String
     OUTPUT: format!(\"Hello {}!\", name)
 ".to_string();
 
-    let user_message = format!("/complete {}", head);
+    let user_message = format!("/implement {}", head);
 
     let res = open_ai_chat_completions(system_message, user_message).unwrap();
 
@@ -31,7 +31,12 @@ pub fn generate_body_function_from_head(head: String) -> Result<String, Box<dyn 
     //TODO: improve the prompt to eliminate the need for this
     let body_str = body_str.trim_matches('`').to_string();
 
-    let implementation = format!("{} {{\n{}\n}}", head, body_str);
+    let implementation = format!(
+        "{} {{
+            {}
+        }}",
+        head, body_str
+    );
 
     Ok(implementation)
 }
