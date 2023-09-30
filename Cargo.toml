@@ -1,6 +1,6 @@
 [package]
 name = "auto-rust"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "A tool to automatically generate Rust code at compile time."
 license = "MIT AND Apache-2.0"
@@ -16,3 +16,7 @@ serde = "1.0.188"
 serde_derive = "1.0.188"
 serde_json = "1.0.107"
 syn = { version = "2.0.37", features = ["full"] }
+
+[[bin]]
+name = "cargo-self"
+path = "src/bin/self.rs"
