@@ -1,11 +1,13 @@
 use std::{fs::canonicalize, path::PathBuf};
 
+use cargo::ops::compile;
+
 // use async_openai::{
 //     types::{ChatCompletionRequestMessageArgs, CreateChatCompletionRequestArgs, Role},
 //     Client,
 // };
 
-use cargo::ops::compile;
+// use cargo::{ops::compile, util::rustc};
 
 #[tokio::main]
 async fn main() {
@@ -72,9 +74,11 @@ async fn main() {
             println!("member: {}", member.name());
         });
 
-    // let res = compile(&ws, &options).unwrap();
+    // rustc::Rustc::new(path, wrapper, workspace_wrapper, rustup_rustc, cache_location, config)
 
-    // res.binaries.iter().for_each(|bin| {
-    //     println!("bin: {}", bin.path.display());
-    // });
+    let res = compile(&ws, &options).unwrap();
+
+    res.binaries.iter().for_each(|bin| {
+        println!("bin: {}", bin.path.display());
+    });
 }
