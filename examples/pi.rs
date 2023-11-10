@@ -1,6 +1,7 @@
 use auto_rust::auto_implement;
 
 #[auto_implement]
+/// Take a deep breath, and implement this function.
 /// This function calculates pi with a reliable algorithm.
 /// don't use 'powi' method
 /// implement the best algorithm known by the humanity
