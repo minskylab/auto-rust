@@ -1,11 +1,7 @@
 use auto_rust::auto_implement;
 
 #[auto_implement]
-/// Take a deep breath, and implement this function.
-/// This function calculates pi with a reliable algorithm.
-/// don't use 'powi' method
-/// implement the best algorithm known by the humanity
-/// use all of your knowledge about rust optimizations
+/// Algoritmo basdo en trignometria para calcular el valor de pi
 fn calculate_pi_with_n_iterations(n: u64) -> f64 {
     todo!()
 }
