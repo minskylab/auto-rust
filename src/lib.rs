@@ -14,18 +14,20 @@ pub fn implement(_item: TokenStream) -> TokenStream {
     // TODO: Evaluate the use of dotenv in this crate
     dotenv().ok();
 
-    let implemented_fn = generate_body_function_from_head(_item.to_string()).unwrap();
+    let implemented_fn = generate_body_function_from_head(_item.to_string(), None).unwrap();
 
-    println!("{}", implemented_fn);
+    // println!("{}", implemented_fn);
 
     implemented_fn.parse().unwrap()
 }
 
 #[proc_macro_attribute]
-pub fn auto_implement(_args: TokenStream, input: TokenStream) -> TokenStream {
+pub fn auto_implement(args: TokenStream, input: TokenStream) -> TokenStream {
     let ast: ItemFn = syn::parse(input).expect("Failed to parse input as a function");
 
-    // Search for the information within the attributes.
+    let context = args.to_string();
+
+    // println!("Context: {}", context);
 
     let mut prompt_input = String::new();
 
@@ -46,11 +48,12 @@ pub fn auto_implement(_args: TokenStream, input: TokenStream) -> TokenStream {
 
     dotenv().ok();
 
-    let implemented_fn = generate_body_function_from_head(prompt_input).unwrap();
+    let implemented_fn = generate_body_function_from_head(prompt_input, Some(context)).unwrap();
 
     // println!("\n{}\n", implemented_fn);
 
     // #[allow(long_running_const_eval)]
+
     // loop {
     // let mut line = String::new();
     // let b1 = std::io::stdin().read_line(&mut line).unwrap();

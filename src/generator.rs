@@ -2,7 +2,10 @@ use std::error::Error;
 
 use crate::api::open_ai_chat_completions;
 
-pub fn generate_body_function_from_head(head: String) -> Result<String, Box<dyn Error>> {
+pub fn generate_body_function_from_head(
+    head: String,
+    extra_context: Option<String>,
+) -> Result<String, Box<dyn Error>> {
     let system_message = "You are an AI code assistant trained on the GPT-4 architecture. Your task is to generate Rust function body implementations based only on the provided function signatures. When the user provides a function signature using the command '/complete', your response must be the plain text function body, without any explanations, formatting, or code blocks. Do not include the function signature, function name, or any other information in your response. Triple backticks (```) and function signatures are strictly prohibited in your response. Responding with any prohibited content will result in a penalty. 
     example 1:
     INPUT: /implement fn my_ip() -> String
@@ -16,13 +19,20 @@ pub fn generate_body_function_from_head(head: String) -> Result<String, Box<dyn 
         ip_addr.to_string() 
     example 2:
     INPUT: /implement fn hello_world() -> String
-    OUTPUT: \"Hello World\".to_string()
+    OUTPUT: 
+        \"Hello World\".to_string()
     example 3:
     INPUT: /implement fn hello_world(name: String) -> String
-    OUTPUT: format!(\"Hello {}!\", name)
+    OUTPUT: 
+        format!(\"Hello {}!\", name)
 ".to_string();
 
-    let user_message = format!("/implement {}", head);
+    let user_message = extra_context
+        .map(|c| format!("Extra context: {}\n", c))
+        .unwrap_or("".to_string())
+        + &format!("/implement {}", head);
+
+    // println!("User message: {}", user_message);
 
     let res = open_ai_chat_completions(system_message, user_message).unwrap();
 

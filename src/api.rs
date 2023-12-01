@@ -8,7 +8,8 @@ pub fn open_ai_chat_completions(
     system_message: String,
     user_message: String,
 ) -> Result<ChatCompletionResponse, Box<dyn std::error::Error>> {
-    let open_ai_key = env::var("OPENAI_API_KEY").unwrap_or("".to_string());
+    let open_ai_key = env::var("OPENAI_API_KEY").unwrap();
+    let model_name = env::var("OPENAI_MODEL_NAME").unwrap_or("gpt-3.5-turbo".to_string());
 
     let mut headers = header::HeaderMap::new();
 
@@ -23,23 +24,20 @@ pub fn open_ai_chat_completions(
         .build()
         .unwrap();
 
+    let body = json!({
+        "model": model_name,
+        "messages": [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": user_message}
+        ]
+    });
+
     let res = client
         .post("https://api.openai.com/v1/chat/completions")
         .headers(headers)
-        .body(
-            json!({
-                "model": "gpt-3.5-turbo",
-                "messages": [
-                    {"role": "system", "content": system_message},
-                    {"role": "user", "content": user_message}
-                ]
-            })
-            .to_string(),
-        )
+        .body(body.to_string())
         .send()?
         .json::<ChatCompletionResponse>()?;
-
-    // println!("{:?}", res);
 
     Ok(res)
 }
