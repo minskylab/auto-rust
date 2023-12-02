@@ -1,6 +1,8 @@
 use auto_rust::auto_implement;
 
 #[auto_implement]
+/// This algorithm works by calculating the area of a circle using the trigonometric formula for the area of a triangle.
+/// Don't use powi, use powf instead. Don't use the sqrt function, use the hypot function instead.
 fn calculate_pi_with_n_iterations(n: u64) -> f64 {
     todo!()
 }

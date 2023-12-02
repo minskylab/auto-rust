@@ -23,6 +23,15 @@ pub fn implement(_item: TokenStream) -> TokenStream {
 
 #[proc_macro_attribute]
 pub fn auto_implement(args: TokenStream, input: TokenStream) -> TokenStream {
+    // env::vars()
+    //     .map(|v| format!("{}: {}\n", v.0, v.1))
+    //     .for_each(|v| print!("{}", v));
+
+    // let this_file = file!();
+    // column!();
+
+    // println!("This file: {}", this_file);
+
     let ast: ItemFn = syn::parse(input).expect("Failed to parse input as a function");
 
     let context = args.to_string();

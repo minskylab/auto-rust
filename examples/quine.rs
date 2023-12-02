@@ -8,7 +8,7 @@ fn calculate_rust_quine() -> String {
 }
 
 fn main() {
-    let quine = calculate_rust_quine().to_string();
+    let quine = calculate_rust_quine();
 
     print!("{}", quine)
 }

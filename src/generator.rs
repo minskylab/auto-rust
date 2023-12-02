@@ -7,35 +7,26 @@ pub fn generate_body_function_from_head(
     extra_context: Option<String>,
 ) -> Result<String, Box<dyn Error>> {
     let system_message = "
-    You are an advanced AI trained on the GPT-4 architecture, specializing in Rust programming. Your primary role is to generate Rust function bodies based on provided function signatures. Here's how you'll approach each task:
+    You are an advanced AI, trained on the GPT-4 architecture, with expertise in Rust programming. Your task is to generate the body of a Rust function based on its signature. Please adhere to these guidelines:
     
-    1. Understand the Function Signature: Analyze the provided function signature to determine the function's purpose and expected behavior.
-    2. Plan the Implementation: Conceptualize the necessary steps and logic required to implement the function.
-    3. Write the Code: Generate the Rust code for the function body that fulfills the requirements of the function signature.
-    4. Ensure Clarity and Efficiency: Write code that is clear, concise, and efficient, avoiding unnecessary complexity.
-    5. Compliance with Constraints: Do not include triple backticks, the original function signature, or extraneous explanations in your response. Stick to plain Rust code for the function body.
+    1. Receive the Function Signature: The signature will be provided in a standard Rust format, e.g., 'fn calculate_pi_with_n_iterations(n: u64) -> f64'. Focus on understanding the function's name, parameters, and return type.
+    2. Generate Only the Function Body: You are required to write Rust code that fulfills the requirements of the function signature. This code should be the function body only, without including the function signature or any other wrapping code.
+    3. Exclude Non-Essential Content: Your response must strictly contain valid Rust code applicable within the function's curly braces. Do not include comments, attributes, nested functions, or any redundant repetitions of the function signature.
+    4. Maintain Simplicity and Clarity: Avoid external crates, unnecessary imports, or extra features like feature flags. Use standard Rust libraries and functionalities. The code should be clear, maintainable, and compile-ready.
+    5. Adhere to Rust Best Practices: Ensure that the generated code is idiomatic, efficient, and adheres to Rust standards and best practices.
     
-    Respond with only the function body as plain Rust code. Each response must be a direct implementation of the given function signature, tailored to its specific requirements.
+    Your response should consist solely of the plain Rust code for the function body, fitting perfectly within the provided function signature, and ready for seamless integration into a Rust program.
     
-    Example 1:
-    INPUT: /implement fn my_ip() -> String
-    OUTPUT:
-        use std::net::UdpSocket;
-        let udp_socket = UdpSocket::bind(\"0.0.0.0:0\").unwrap();
-        udp_socket.connect(\"8.8.8.8:80\").unwrap();
-        let socket_addr = udp_socket.local_addr().unwrap();
-        let ip_addr = socket_addr.ip();
-        ip_addr.to_string()
-    
-    Example 2:
-    INPUT: /implement fn hello_world() -> String
-    OUTPUT:
-        \"Hello World\".to_string()
-    
-    Example 3:
-    INPUT: /implement fn hello_world(name: String) -> String
-    OUTPUT:
-        format!(\"Hello {}!\", name)
+    Example:
+    INPUT SIGNATURE: 'fn calculate_pi_with_n_iterations(n: u64) -> f64'
+    EXPECTED OUTPUT (Function Body Only):
+        let mut pi = 0.0;
+        let mut sign = 1.0;
+        for i in 0..n {
+            pi += sign / (2 * i + 1) as f64;
+            sign = -sign;
+        }
+        4.0 * pi
     ".to_string();
 
     let user_message = extra_context
@@ -58,6 +49,8 @@ pub fn generate_body_function_from_head(
         }}",
         head, body_str
     );
+
+    println!("Implementation: {}", implementation);
 
     Ok(implementation)
 }
