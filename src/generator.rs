@@ -54,3 +54,11 @@ pub fn generate_body_function_from_head(
 
     Ok(implementation)
 }
+
+pub fn minimal_llm_function(input: String) -> String {
+    let system_message = "Your task is respond with a string with double quote".to_string();
+
+    let res = open_ai_chat_completions(system_message, input).unwrap();
+
+    res.choices.first().unwrap().to_owned().message.content
+}
