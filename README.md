@@ -1,6 +1,6 @@
 # Auto Rust
 
-`auto-rust` is an experimental project that aims to automatically generate Rust code with LLM (Large Language Models) during compilation, utilizing procedural macros.
+`auto-rust` is an experimental project that automatically generate Rust code with LLM (Large Language Models) during compilation, utilizing procedural macros.
 
 <p align="center">
   <img width="640" src="public/auto_rust_example.png">
