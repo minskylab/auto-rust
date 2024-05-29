@@ -33,7 +33,7 @@ pub fn open_ai_chat_completions(
     });
 
     let res = client
-        .post("https://api.openai.com/v1/chat/completions")
+        .post("https://openrouter.ai/api/v1/chat/completions")
         .headers(headers)
         .body(body.to_string())
         .send()?

@@ -4,8 +4,13 @@ mod generator;
 
 use dotenv::dotenv;
 
+use ignore::Walk;
 use proc_macro::TokenStream;
+// use quote::quote;
+
 use syn::{ItemFn, __private::ToTokens};
+
+// use git2::Repository;
 
 use crate::generator::{generate_body_function_from_head, minimal_llm_function};
 
@@ -18,6 +23,30 @@ pub fn auto_generate(item: TokenStream) -> TokenStream {
     // println!("{:?}", res);
 
     res.parse().unwrap()
+}
+
+#[proc_macro_attribute]
+pub fn llm_tool(args: TokenStream, input: TokenStream) -> TokenStream {
+    let cargo_toml_path = std::env::var("CARGO_MANIFEST_DIR").unwrap_or("".to_string());
+
+    println!("{:?}", cargo_toml_path);
+
+    for result in Walk::new(cargo_toml_path) {
+        match result {
+            Ok(entry) => {
+                let path = format!("{}", entry.path().display());
+
+                if entry.path().is_file() {
+                    if let Ok(kind) = hyperpolyglot::detect(entry.path()) {
+                        println!("{}: {:?}", path, kind);
+                    }
+                }
+            }
+            Err(err) => println!("ERROR: {}", err),
+        }
+    }
+
+    input
 }
 
 #[proc_macro_attribute]
