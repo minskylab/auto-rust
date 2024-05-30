@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use crate::api::open_ai_chat_completions;
+use crate::api::generic_chat_completion;
 
 pub fn generate_body_function_from_head(
     head: String,
@@ -36,7 +36,7 @@ pub fn generate_body_function_from_head(
         );
 
     // Call the external LLM API to get the function body
-    let res = open_ai_chat_completions(system_message, user_message)?;
+    let res = generic_chat_completion(system_message, user_message)?;
 
     let body_str = res.choices.first().unwrap().message.content.trim();
 
@@ -65,7 +65,7 @@ pub fn generate_body_function_from_head(
 pub fn minimal_llm_function(input: String) -> String {
     let system_message = "Your task is respond with a string with double quotes.".to_string();
 
-    let res = open_ai_chat_completions(system_message, input).unwrap();
+    let res = generic_chat_completion(system_message, input).unwrap();
 
     res.choices.first().unwrap().to_owned().message.content
 }

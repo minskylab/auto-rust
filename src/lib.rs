@@ -4,6 +4,7 @@ mod generator;
 
 use std::fs::read_to_string;
 
+use api::generic_chat_completion;
 use dotenv::dotenv;
 
 use ignore::Walk;
@@ -34,7 +35,11 @@ struct RawSourceCode {
 }
 
 #[proc_macro_attribute]
-pub fn llm_tool(args: TokenStream, input: TokenStream) -> TokenStream {
+pub fn llm_tool(_args: TokenStream, input: TokenStream) -> TokenStream {
+    dotenv().ok();
+
+    let ast: ItemFn = syn::parse(input).expect("Failed to parse input as a function");
+
     let cargo_toml_path = std::env::var("CARGO_MANIFEST_DIR").unwrap_or("".to_string());
 
     println!("{:?}", cargo_toml_path);
@@ -82,8 +87,71 @@ pub fn llm_tool(args: TokenStream, input: TokenStream) -> TokenStream {
         .collect::<Vec<String>>()
         .join("\n");
 
-    println!("{}", source_code_context);
-    input
+    // println!("{}", source_code_context);
+
+    let system_message = format!("
+    You are an advanced AI, trained on the GPT-4 architecture, with expertise in Rust programming. Your task is to generate the body of a Rust function based on its signature. Please adhere to these guidelines:
+    
+    1. Receive the Function Signature: The signature will be provided in a standard Rust format, e.g., 'fn calculate_pi_with_n_iterations(n: u64) -> f64'. Focus on understanding the function's name, parameters, and return type.
+    2. Generate Only the Function Body: You are required to write Rust code that fulfills the requirements of the function signature. This code should be the function body only, without including the function signature or any other wrapping code.
+    3. Exclude Non-Essential Content: Your response must strictly contain valid Rust code applicable within the function's curly braces. Do not include comments, attributes, nested functions, or any redundant repetitions of the function signature. Do not include any explanation or additional text outside of the function body.
+    4. Maintain Simplicity and Clarity: Avoid external crates, unnecessary imports, or extra features like feature flags. Use standard Rust libraries and functionalities. The code should be clear, maintainable, and compile-ready.
+    5. Adhere to Rust Best Practices: Ensure that the generated code is idiomatic, efficient, and adheres to Rust standards and best practices.
+    
+    Example:
+    INPUT SIGNATURE: 'fn calculate_pi_with_n_iterations(n: u64) -> f64'
+    EXPECTED OUTPUT (Function Body Only):
+        let mut pi = 0.0;
+        let mut sign = 1.0;
+        for i in 0..n {{
+            pi += sign / (2 * i + 1) as f64;
+            sign = -sign;
+        }}
+        4.0 * pi
+    
+    Global Context:
+    {}
+    ", source_code_context);
+
+    let mut prompt_input = String::new();
+
+    let fn_header = ast.sig.to_token_stream().to_string();
+
+    for attr in ast.attrs {
+        let data = attr.to_token_stream().to_string();
+
+        prompt_input.push_str(&data);
+        prompt_input.push('\n');
+    }
+
+    prompt_input.push_str(&fn_header);
+
+    let res = generic_chat_completion(system_message, prompt_input.clone()).unwrap();
+
+    let body_str = res
+        .choices
+        .first()
+        .unwrap()
+        .message
+        .content
+        .trim()
+        .trim_matches('`')
+        .to_string()
+        .lines()
+        .skip_while(|line| line.starts_with("rust") || line.starts_with("#["))
+        .collect::<Vec<&str>>()
+        .join("\n");
+
+    let implementation = format!(
+        "{} {{
+            {}
+        }}",
+        prompt_input, body_str
+    );
+
+    println!("impl:\n {}", implementation);
+
+    implementation.parse().unwrap()
 }
 
 #[proc_macro_attribute]

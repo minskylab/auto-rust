@@ -4,7 +4,7 @@ use std::env;
 
 use crate::data::ChatCompletionResponse;
 
-pub fn open_ai_chat_completions(
+pub fn generic_chat_completion(
     system_message: String,
     user_message: String,
 ) -> Result<ChatCompletionResponse, Box<dyn std::error::Error>> {

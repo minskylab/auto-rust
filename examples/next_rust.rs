@@ -1,13 +1,13 @@
 use auto_rust::llm_tool;
 
 #[llm_tool]
-fn natural_function(ctx: String, input: String) {
+/// This function returns the power of two of a number
+fn power_two(number: u64) -> u64 {
     todo!()
 }
 
 fn main() {
-    // let a = auto_generate!("a random number between 1 and 10");
+    let res = power_two(4);
 
-    // print_type_of(&a);
-    // println!("{}", a);
+    println!("{:?}", res)
 }
