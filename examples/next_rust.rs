@@ -1,13 +1,13 @@
 use auto_rust::llm_tool;
 
 #[llm_tool]
-/// This function returns the power of two of a number
-fn power_two(number: u64) -> u64 {
+/// This function returns n^2 + 1 of a number
+fn n_squared_plus_one(n: u64) -> u64 {
     todo!()
 }
 
 fn main() {
-    let res = power_two(4);
+    let res = n_squared_plus_one(4);
 
-    println!("{:?}", res)
+    println!("{:?}", res);
 }

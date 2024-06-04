@@ -1,6 +1,6 @@
 [package]
 name = "auto-rust"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 description = "A tool to automatically generate Rust code using LLMs at compilation time."
 license = "MIT AND Apache-2.0"

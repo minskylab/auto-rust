@@ -126,7 +126,11 @@ pub fn llm_tool(_args: TokenStream, input: TokenStream) -> TokenStream {
 
     prompt_input.push_str(&fn_header);
 
+    println!("prompt_input: {}", prompt_input);
+
     let res = generic_chat_completion(system_message, prompt_input.clone()).unwrap();
+
+    println!("res: {:?}", res);
 
     let body_str = res
         .choices
