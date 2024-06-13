@@ -1,10 +1,12 @@
 mod api;
+mod cache;
 mod data;
 mod generator;
 
 use std::fs::read_to_string;
 
 use api::generic_chat_completion;
+use cache::ResolvedSourceCode;
 use dotenv::dotenv;
 
 use ignore::Walk;
@@ -37,6 +39,12 @@ struct RawSourceCode {
 #[proc_macro_attribute]
 pub fn llm_tool(_args: TokenStream, input: TokenStream) -> TokenStream {
     dotenv().ok();
+
+    println!("args: {:?}", _args);
+
+    // detect #[llm_tool(live)] arg
+
+    let is_live = _args.to_string().contains("live");
 
     let ast: ItemFn = syn::parse(input).expect("Failed to parse input as a function");
 
@@ -109,6 +117,8 @@ pub fn llm_tool(_args: TokenStream, input: TokenStream) -> TokenStream {
         }}
         4.0 * pi
     
+    Don't forget only respond with the function body. Don't include nature language text or explanation of your response.
+
     Global Context:
     {}
     ", source_code_context);
@@ -128,6 +138,18 @@ pub fn llm_tool(_args: TokenStream, input: TokenStream) -> TokenStream {
 
     println!("prompt_input: {}", prompt_input);
 
+    let hash = md5::compute(prompt_input.as_bytes());
+
+    let hash_string = format!("{:x}", hash);
+
+    let existing_resolution = ResolvedSourceCode::load(&hash_string);
+
+    if !is_live {
+        if let Some(resolution) = existing_resolution {
+            return resolution.implementation.parse().unwrap();
+        }
+    }
+
     let res = generic_chat_completion(system_message, prompt_input.clone()).unwrap();
 
     println!("res: {:?}", res);
@@ -140,6 +162,7 @@ pub fn llm_tool(_args: TokenStream, input: TokenStream) -> TokenStream {
         .content
         .trim()
         .trim_matches('`')
+        .trim_matches('\'')
         .to_string()
         .lines()
         .skip_while(|line| line.starts_with("rust") || line.starts_with("#["))
@@ -150,10 +173,19 @@ pub fn llm_tool(_args: TokenStream, input: TokenStream) -> TokenStream {
         "{} {{
             {}
         }}",
-        prompt_input, body_str
+        prompt_input.clone(),
+        body_str
     );
 
     println!("impl:\n {}", implementation);
+
+    let new_resolution = ResolvedSourceCode {
+        implementation: implementation.clone(),
+        hash: format!("{:x}", hash),
+        prompt_input,
+    };
+
+    new_resolution.save();
 
     implementation.parse().unwrap()
 }

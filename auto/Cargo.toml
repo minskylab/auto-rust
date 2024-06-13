@@ -12,6 +12,7 @@ license = "MIT AND Apache-2.0"
 dotenv = "0.15.0"
 hyperpolyglot = "0.1.7"
 ignore = "0.4.22"
+md5 = "0.7.0"
 reqwest = { version = "0.12.4", features = ["blocking", "json"] }
 serde = "1.0.203"
 serde_derive = "1.0.203"
