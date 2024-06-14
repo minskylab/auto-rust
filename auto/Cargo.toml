@@ -2,7 +2,7 @@
 proc-macro = true
 
 [package]
-name = "auto_rust"
+name = "auto-rust"
 version = "0.1.5"
 edition = "2021"
 description = "A tool to automatically generate Rust code using LLMs at compilation time."
