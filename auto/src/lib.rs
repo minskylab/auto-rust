@@ -37,14 +37,14 @@ struct RawSourceCode {
 }
 
 #[proc_macro_attribute]
-pub fn llm_tool(_args: TokenStream, input: TokenStream) -> TokenStream {
+pub fn llm_tool(args: TokenStream, input: TokenStream) -> TokenStream {
     dotenv().ok();
 
-    println!("args: {:?}", _args);
+    println!("args: {:?}", args);
 
     // detect #[llm_tool(live)] arg
 
-    let is_live = _args.to_string().contains("live");
+    let is_live = args.to_string().contains("live");
 
     let ast: ItemFn = syn::parse(input).expect("Failed to parse input as a function");
 
@@ -98,7 +98,7 @@ pub fn llm_tool(_args: TokenStream, input: TokenStream) -> TokenStream {
     // println!("{}", source_code_context);
 
     let system_message = format!("
-    You are an advanced AI, trained on the GPT-4 architecture, with expertise in Rust programming. Your task is to generate the body of a Rust function based on its signature. Please adhere to these guidelines:
+    You are an advanced AI, trained on the most modern  architecture, with expertise in Rust programming. Your task is to generate the body of a Rust function based on its signature. Please adhere to these guidelines:
     
     1. Receive the Function Signature: The signature will be provided in a standard Rust format, e.g., 'fn calculate_pi_with_n_iterations(n: u64) -> f64'. Focus on understanding the function's name, parameters, and return type.
     2. Generate Only the Function Body: You are required to write Rust code that fulfills the requirements of the function signature. This code should be the function body only, without including the function signature or any other wrapping code.
@@ -117,7 +117,7 @@ pub fn llm_tool(_args: TokenStream, input: TokenStream) -> TokenStream {
         }}
         4.0 * pi
     
-    Don't forget only respond with the function body. Don't include nature language text or explanation of your response.
+    Don't forget only respond with the function body. Don't include nature language text or explanation in your response.
 
     Global Context:
     {}
