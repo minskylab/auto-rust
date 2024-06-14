@@ -8,7 +8,7 @@ use poem::{
 #[handler]
 /// The response will be an html layout with the name and the number of letters in the name.
 /// Ensure to return a content type of text/html.
-fn hello(Path(name): Path<String>) -> impl IntoResponse {
+async fn hello(Path(name): Path<String>) -> impl IntoResponse {
     todo!()
 }
 
@@ -18,7 +18,8 @@ fn hello(Path(name): Path<String>) -> impl IntoResponse {
 /// The count will be stored in a file.
 /// The count will be incremented each time the page is visited.
 /// The count will be displayed on the page.
-fn count() -> impl IntoResponse {
+/// Ensure to return a content type of text/html.
+async fn count() -> impl IntoResponse {
     todo!()
 }
 

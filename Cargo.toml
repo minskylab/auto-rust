@@ -3,4 +3,4 @@ resolver = "2"
 members = ["auto", "examples/server"]
 
 [workspace.dependencies]
-auto_rust = { path = "auto" }
+auto-rust = { path = "auto" }

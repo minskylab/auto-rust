@@ -53,7 +53,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "auto_rust"
+name = "auto-rust"
 version = "0.1.5"
 dependencies = [
  "dotenv",
@@ -1501,7 +1501,7 @@ dependencies = [
 name = "server"
 version = "0.1.0"
 dependencies = [
- "auto_rust",
+ "auto-rust",
  "poem",
  "tokio",
 ]
