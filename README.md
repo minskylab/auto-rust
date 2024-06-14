@@ -15,7 +15,7 @@ Auto-Rust is currently under development and is not yet suitable for production 
 * **AI-Powered Code Generation:**  Leverage the capabilities of LLMs to generate Rust function bodies based on your specifications.
 * **Compile-Time Integration:** Seamlessly integrate code generation into your Rust projects with our easy-to-use procedural macro.
 * **Context-Aware Generation:** Auto-Rust considers your function signature, doc comments, and some code within your project to generate contextually relevant implementations.
-* **Live Reload for Development:** Speed up your development workflow with the `live` argument.  Auto-Rust will regenerate code on every compilation, providing near-instant feedback as you refine your function signatures and documentation.
+* **Built-in Caching:** Auto-Rust caches successful code generation results to accelerate your development workflow. Avoid unnecessary LLM calls and reduce compile times!
 
 ## Getting Started
 
@@ -52,16 +52,24 @@ fn hello(Path(name): Path<String>) -> impl IntoResponse {
 }
 ```
 
-**Enabling Live Reload**
+**Live Reload with `live` Argument**
 
-To activate live reload during development, simply add the `live` argument to the `#[llm_tool]` attribute:
+To enable live reload for seamless development, use the `live` argument for the `llm_tool` macro. 
 
 ```rust
 #[llm_tool(live)] 
-// ... your function signature and documentation
 ```
 
-Keep in mind that using `live` will result in the LLM being called on every compilation, which may increase compile times.
+Enabling `live` reload forces Auto-Rust to bypass its caching mechanism. On each compilation, it will send a request to the LLM, ensuring you always receive the most up-to-date code generation based on your function signature, doc comments, and current codebase context.  
+
+**How Caching Works**
+
+Auto-Rust implements a simple caching mechanism. Each time it generates code for a function:
+   - It creates a hash based on the function signature, doc comments, and relevant code context.
+   - This hash is used to store the LLM's generated code.
+   - On subsequent compilations, Auto-Rust will first check if a cached result exists for the given hash. If found, it directly uses the cached code, preventing unnecessary LLM calls. 
+
+Use the `live` argument when you want to prioritize receiving the most current code generation from the LLM, even if it leads to slightly increased compile times.
 
 ## Example
 
@@ -116,16 +124,19 @@ poem::Response::builder()
 }
 ```
 
-## How it Works (For Developers)
+## Explanation for Developers
 
-Auto-Rust utilizes Rust's procedural macro system to generate code during compilation. When you annotate a function with `#[llm_tool]`, the macro performs the following steps:
+Auto-Rust utilizes Rust's powerful procedural macro system to inject code at compile time. When you use the `#[llm_tool]` macro:
 
-1. **Code Extraction:** It extracts the function signature and doc comments.
-2. **Context Gathering:** It gathers additional code from your project to provide context to the LLM (currently limited to a basic file scan).
-3. **Prompt Generation:** Auto-Rust constructs a detailed prompt for the LLM, including instructions, the function signature, doc comments, and gathered context.
-4. **LLM API Call:** It sends the generated prompt to the OpenAI API, requesting code completion.
-5. **Code Insertion:**  The LLM's response (the generated function body) is inserted into your code, replacing the `todo!()` placeholder.
-6. **Caching:** Auto-Rust caches successful code generations based on the function signature and doc comments. This improves performance by avoiding unnecessary LLM calls for unchanged code. The `live` argument bypasses this caching mechanism.
+1. **Parsing:** The macro parses the annotated function's signature, including its name, arguments, return type, and any doc comments.
+
+2. **Context Extraction:** It extracts the code within your project, providing some context for the LLM to understand the surrounding code and project better.
+
+3. **Prompt Engineering:** It constructs a prompt that includes the extracted information. This prompt is carefully designed to guide the LLM in generating a relevant and correct Rust function implementation.
+
+4. **LLM Interaction:** It sends the generated prompt to an LLM API. 
+
+5. **Code Insertion:** The LLM's response, which contains the generated Rust code, is inserted directly into your codebase, replacing the `todo!()` placeholder.
 
 ## Limitations
 
