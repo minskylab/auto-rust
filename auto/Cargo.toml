@@ -3,7 +3,7 @@ proc-macro = true
 
 [package]
 name = "auto_rust"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 description = "A tool to automatically generate Rust code using LLMs at compilation time."
 license = "MIT AND Apache-2.0"
